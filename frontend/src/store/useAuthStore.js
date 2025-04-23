@@ -110,13 +110,27 @@ const {authUser}=get()
 if(!authUser || get().socket?.connected) return 
 
 
-    const socket = io(BASE_URL)
+    const socket = io(BASE_URL,{
+      query:{
+        userId :authUser._id,
+      }
+    })
 
 
 
     socket.connect()
+
+    set({socket:socket})
+
+socket.on("getOnlineUsers",(userIds)=>{
+  set({onlineUsers:userIds})
+})
+
   },
-  disconnectSocket:()=>{},
+  disconnectSocket:()=>{
+    if(get().socket?.connected) get().socket.disconnect()
+    
+  },
 
   
 }));
