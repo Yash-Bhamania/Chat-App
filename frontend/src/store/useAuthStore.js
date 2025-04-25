@@ -7,9 +7,9 @@ import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 
 
-const BASE_URL = "http://localhost:5002"
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5002/api" : "/"
 
-export const useAuthStore = create((set,get) => ({
+export const useAuthStore = create((set, get) => ({
   authUser: null,
 
   isSigningUp: false,
@@ -18,7 +18,7 @@ export const useAuthStore = create((set,get) => ({
 
   isCheckingAuth: true,
   onlineUsers: [],
-  socket:null,
+  socket: null,
 
   checkAuth: async () => {
     try {
@@ -79,7 +79,7 @@ export const useAuthStore = create((set,get) => ({
     try {
       await axiosInstance.post("/auth/logout");
       set({ authUser: null });
-     
+
       toast.success("Sucessfully logout");
       get().disconnectSocket();
       return true
@@ -103,16 +103,16 @@ export const useAuthStore = create((set,get) => ({
     }
   },
 
-  connectSocket:()=>{
-const {authUser}=get()
+  connectSocket: () => {
+    const { authUser } = get()
 
 
-if(!authUser || get().socket?.connected) return 
+    if (!authUser || get().socket?.connected) return
 
 
-    const socket = io(BASE_URL,{
-      query:{
-        userId :authUser._id,
+    const socket = io(BASE_URL, {
+      query: {
+        userId: authUser._id,
       }
     })
 
@@ -120,17 +120,17 @@ if(!authUser || get().socket?.connected) return
 
     socket.connect()
 
-    set({socket:socket})
+    set({ socket: socket })
 
-socket.on("getOnlineUsers",(userIds)=>{
-  set({onlineUsers:userIds})
-})
+    socket.on("getOnlineUsers", (userIds) => {
+      set({ onlineUsers: userIds })
+    })
 
   },
-  disconnectSocket:()=>{
-    if(get().socket?.connected) get().socket.disconnect()
-    
+  disconnectSocket: () => {
+    if (get().socket?.connected) get().socket.disconnect()
+
   },
 
-  
+
 }));
