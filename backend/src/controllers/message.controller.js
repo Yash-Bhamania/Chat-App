@@ -1,3 +1,4 @@
+import { getReceiverSocketId, io } from "../lib/socket.js";
 import User from "../models/user.modal.js";
 import cloudinary from "./../lib/cloudinary.js";
 import Message from './../models/message.modal.js';
@@ -54,12 +55,18 @@ export const sendMessage = async (req, res) => {
       image: imageUrl,
     });
 
-await newMessage.save()
+    await newMessage.save()
 
-//todo: realtime functionality yha likhi jayegi => socket.io ka use kr k
+    //todo: realtime functionality yha likhi jayegi => socket.io ka use kr k
 
 
-res.status(201).json(newMessage)
+    const receiverSocketId = getReceiverSocketId(receiverId)
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage)
+    }
+
+
+    res.status(201).json(newMessage)
 
 
   } catch (error) {

@@ -16,8 +16,7 @@ import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
-import { useThemeStore } from './store/useThemeStore';
-
+import { useThemeStore } from "./store/useThemeStore";
 
 const RootLayout = () => {
   return (
@@ -29,10 +28,9 @@ const RootLayout = () => {
 };
 
 function App() {
-  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
-
-  const { theme, } = useThemeStore();
-
+  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
+  console.log({ onlineUsers });
+  const { theme } = useThemeStore();
 
   useEffect(() => {
     checkAuth();
@@ -80,7 +78,7 @@ function App() {
   ]);
 
   return (
-    <div data-theme={theme} >
+    <div data-theme={theme}>
       <RouterProvider router={router} />
       <Toaster />
     </div>
